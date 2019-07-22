@@ -1,0 +1,28 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Merge Close Vertices">
+  <Param max="2.32953" value="0.023295" type="RichAbsPerc" description="Merging distance" tooltip="All the vertices that closer than this threshold are merged together. Use very small values, default values is 1/10000 of bounding box diagonal. " min="0" isxmlparam="0" name="Threshold"/>
+ </filter>
+ <filter name="Simplification: Quadric Edge Collapse Decimation (with texture)">
+  <Param value="1500000" type="RichInt" description="Target number of faces" tooltip="" isxmlparam="0" name="TargetFaceNum"/>
+  <Param value="0" type="RichFloat" description="Percentage reduction (0..1)" tooltip="If non zero, this parameter specifies the desired final size of the mesh as a percentage of the initial mesh." isxmlparam="0" name="TargetPerc"/>
+  <Param value="0.7" type="RichFloat" description="Quality threshold" tooltip="Quality threshold for penalizing bad shaped faces.&lt;br>The value is in the range [0..1]&#xa; 0 accept any kind of face (no penalties),&#xa; 0.5  penalize faces with quality &lt; 0.5, proportionally to their shape&#xa;" isxmlparam="0" name="QualityThr"/>
+  <Param value="1" type="RichFloat" description="Texture Weight" tooltip="Additional weight for each extra Texture Coordinates for every (selected) vertex" isxmlparam="0" name="Extratcoordw"/>
+  <Param value="false" type="RichBool" description="Preserve Boundary of the mesh" tooltip="The simplification process tries not to destroy mesh boundaries" isxmlparam="0" name="PreserveBoundary"/>
+  <Param value="1" type="RichFloat" description="Boundary Preserving Weight" tooltip="The importance of the boundary during simplification. Default (1.0) means that the boundary has the same importance of the rest. Values greater than 1.0 raise boundary importance and has the effect of removing less vertices on the border. Admitted range of values (0,+inf). " isxmlparam="0" name="BoundaryWeight"/>
+  <Param value="true" type="RichBool" description="Optimal position of simplified vertices" tooltip="Each collapsed vertex is placed in the position minimizing the quadric error.&#xa; It can fail (creating bad spikes) in case of very flat areas. &#xa;If disabled edges are collapsed onto one of the two original vertices and the final mesh is composed by a subset of the original vertices. " isxmlparam="0" name="OptimalPlacement"/>
+  <Param value="false" type="RichBool" description="Preserve Normal" tooltip="Try to avoid face flipping effects and try to preserve the original orientation of the surface" isxmlparam="0" name="PreserveNormal"/>
+  <Param value="true" type="RichBool" description="Planar Simplification" tooltip="Add additional simplification constraints that improves the quality of the simplification of the planar portion of the mesh." isxmlparam="0" name="PlanarQuadric"/>
+  <Param value="false" type="RichBool" description="Simplify only selected faces" tooltip="The simplification is applied only to the selected set of faces.&#xa; Take care of the target number of faces!" isxmlparam="0" name="Selected"/>
+ </filter>
+ <filter name="Transfer: Texture to Vertex Color (1 or 2 meshes)">
+  <Param value="0" type="RichMesh" description="" tooltip="" isxmlparam="0" name="sourceMesh"/>
+  <Param value="0" type="RichMesh" description="" tooltip="" isxmlparam="0" name="targetMesh"/>
+  <Param max="2.5571" value="0.500" type="RichAbsPerc" description="Max Dist Search" tooltip="Sample points for which we do not find anything whithin this distance are rejected and not considered for recovering color" min="0" isxmlparam="0" name="upperBound"/>
+ </filter>
+ <filter name="UnSharp Mask Color">
+  <Param value="0.3" type="RichFloat" description="Unsharp Weight" tooltip="the unsharp weight &lt;i>w&lt;sub>&lt;big>u&lt;/big>&lt;/sub>&lt;/i> in the unsharp mask equation: &lt;br> &lt;i>w&lt;sub>&lt;big>o&lt;/big>&lt;/sub>orig + w&lt;sub>&lt;big>u&lt;/big>&lt;/sub> (orig - lowpass)&lt;i>&lt;br>" isxmlparam="0" name="weight"/>
+  <Param value="1" type="RichFloat" description="Original Color Weight" tooltip="How much the original signal is used, e.g. the weight &lt;i>w&lt;sub>&lt;big>o&lt;/big>&lt;/sub>&lt;/i> in the above unsharp mask equation&lt;br> Usually you should not need to change the default 1.0 value." isxmlparam="0" name="weightOrig"/>
+  <Param value="5" type="RichInt" description="Smooth Iterations" tooltip="number of iterations of laplacian smooth in every run" isxmlparam="0" name="iterations"/>
+ </filter>
+</FilterScript>

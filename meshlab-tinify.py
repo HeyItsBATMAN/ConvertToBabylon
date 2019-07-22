@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 from glob import glob
 
 ARGV = sys.argv[sys.argv.index("--") + 1:]
@@ -7,6 +8,26 @@ ARGV = sys.argv[sys.argv.index("--") + 1:]
 print('Searching .obj\'s from path {0}'.format(ARGV[0]))
 if ARGV == None or len(ARGV) == 0:
     raise "No path given\nUsage:\npython meshlab-tinify.py -- /path/to/folder/for/search"
+
+# Fix folders with bad names
+def slugify(text):
+    text = re.sub(r'\s+', '_', text)  # Replace spaces
+    text = re.sub(r'ä', 'ae', text)   # Replace ä
+    text = re.sub(r'ö', 'oe', text)   # Replace ö
+    text = re.sub(r'ü', 'ue', text)   # Replace ü
+    return text
+
+folders = glob(os.path.dirname(ARGV[0]) + '/**/', recursive = True)
+folders.sort(key=lambda a: a.count('/'))
+folders = reversed(folders)
+
+for folder in folders:
+    newfolder = slugify(folder)
+    if folder != newfolder and os.path.exists(folder):
+        print('Found bad folder name. Fixing...')
+        args = 'mv "{0}" "{1}"'.format(folder, newfolder)
+        print(args)
+        os.system(args)
 
 def fix_mtls(path):
     mtls = glob(os.path.dirname(path) + '/**/*.mtl', recursive = True)
@@ -43,8 +64,11 @@ def reduce_model(path):
         new = infile + '_' + size + '.ply'
         log = infile + '.log'
         args = 'meshlabserver -i "{0}" -o "{1}" -m {2} -s {3} -s "{4}" &>> "{5}"'.format(old, new, flags, normalize_script, size_script, log)
-        print('Next quality:', new)
-        os.system(args)
+        if os.path.exists(new):
+            print('Quality', size, 'already processed. Skipping...')
+        else:
+            print('Next quality:', new)
+            os.system(args)
         processed.append(new)
     return processed
 

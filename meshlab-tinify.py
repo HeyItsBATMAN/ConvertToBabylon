@@ -9,7 +9,6 @@ print('Searching .obj\'s from path {0}'.format(ARGV[0]))
 if ARGV == None or len(ARGV) == 0:
     raise "No path given\nUsage:\npython meshlab-tinify.py -- /path/to/folder/for/search"
 
-# Fix folders with bad names
 def slugify(text):
     text = re.sub(r'\s+', '_', text)  # Replace spaces
     text = re.sub(r'ä', 'ae', text)   # Replace ä
@@ -17,17 +16,22 @@ def slugify(text):
     text = re.sub(r'ü', 'ue', text)   # Replace ü
     return text
 
+def fix_path(oldpath):
+    newpath = slugify(oldpath)
+    if oldpath != newpath and os.path.exists(oldpath):
+        print('Found bad path. Fixing...')
+        args = 'mv "{0}" "{1}"'.format(oldpath, newpath)
+        print(args)
+        os.system(args)
+        return newpath
+    return oldpath
+
+# Fix folders with bad names
 folders = glob(os.path.dirname(ARGV[0]) + '/**/', recursive = True)
 folders.sort(key=lambda a: a.count('/'))
 folders = reversed(folders)
-
 for folder in folders:
-    newfolder = slugify(folder)
-    if folder != newfolder and os.path.exists(folder):
-        print('Found bad folder name. Fixing...')
-        args = 'mv "{0}" "{1}"'.format(folder, newfolder)
-        print(args)
-        os.system(args)
+    fix_path(folder)
 
 def fix_mtls(path):
     mtls = glob(os.path.dirname(path) + '/**/*.mtl', recursive = True)
@@ -92,6 +96,10 @@ objs = [obj for obj in objs if '_small' not in obj and '_medium' not in obj and 
 print('Found {0} objs'.format(len(objs)))
 for i in range(len(objs)):
     obj = objs[i]
+
+    # Fix obj with bad path
+    obj = fix_path(obj)
+
     print('######## MODEL {0}/{1} ########'.format(i + 1, len(objs)))
     print('Path:', obj)
 
